@@ -41,17 +41,52 @@ fn main() {
         }
     }
 
-    let email = String::from("example@example.com");
+    // インスタンスの値を更新して、新しいインスタンスを作りたい
     let user2 = User {
-        email,  // 普通の変数でもフィールド初期化記法は可能！
-        username: String::from("someusername123"),
-        active: true,
-        sign_in_count: 1,
+        email: String::from("another@example.com"),
+        username: String::from("anotherusername567"),
+        active: user1.active,
+        sign_in_count: user1.sign_in_count
     };
-    println!("user2.email(mut): {}", user2.email);
+    // 上と下は同じ事をしている
+    // 構造体更新記法
+    let user2 = User {
+        email: String::from("another@example.com"),
+        username: String::from("anotherusername567"),
+        ..user1  // 明示的にセットしていないフィールドが、与えられたインスタンスのフィールドと同じ値になる
+    };
+
+    // フィールドの型だけのタプル構造体
+    // フィールドが同じ型でも、これ自体は型が違う扱いになる。
+    // 引数にColorを受け取る関数は、Pointを実引数に受け取れない
+    struct Color(i32, i32, i32);
+    struct Point(i32, i32, i32);
+
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+
+    println!("{}", black.1);
+
+    // フィールドの型には、ライフタイムをしていしないと参照は使えない. *1
+    // struct ErrorUser {
+    //     email: &str,
+    //     username: &str
+    // }
+
+
 }
 
 
 
 
 // 構造体は、各データ片に名前をつけるため、タプルよりも値の意味が明確
+
+// 何もかも空の構造体(ユニット様構造体)を定義できる
+
+/*
+*1
+    構造体のインスタンスには、全データを所有してもらう必要がある
+    このデータは、構造体全体が有効な間はずっと有効である必要があるのです。
+    参照を持たせることもできるが、それをするにはライフタイムを使用しなければならない
+    ライフタイムのおかげで構造体に参照されたデータが、構造体自体が有効な間、ずっと有効であることを保証してくれるのです。
+*/

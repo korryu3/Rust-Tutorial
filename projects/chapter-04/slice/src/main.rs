@@ -72,7 +72,9 @@ fn first_word(s: &str) -> &str {  // 文字列スライスも引数に入れた�
     &s[..]  // s[..i]はsの一部を"借用"しているだけだから、参照で返さないと、sの所有権がムーブされてしまう(多分)
     // &strの疑問解決
     // [Rust - strが引数/戻り値で使えない理由について](https://zenn.dev/philomagi/articles/rust_why_cant_use_str_as_both_argument_and_return)
-
+    // 関数の引数として渡された値はスタックへ乗せられる
+    // strだけだと任意長なので、参照にすることで、strへのポインタ(固定長)を乗せている
+    // 関数の戻り値もやはりスタックへ乗せられる
 }
 
 
