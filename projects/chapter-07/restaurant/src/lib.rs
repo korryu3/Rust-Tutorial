@@ -12,6 +12,7 @@ mod front_of_house {
 
         fn seat_at_table() {
             // superはこういうこともできる
+            // ../../eat_at_restaurant みたいな感じ
             super::super::eat_at_restaurant();
         }
     }
@@ -46,7 +47,7 @@ mod back_of_house {
     pub struct Breakfast {
         // フィールドごとに公開の可否を設定できる
         pub toast: String,
-        pub seasonal_fruit: String,
+        seasonal_fruit: String,
     }
 
     impl Breakfast {
@@ -57,9 +58,24 @@ mod back_of_house {
             }
         }
     }
+
+    // enumを公開すると、enumのすべてのバリアントが公開される
+    pub enum Appetizer {
+        Soup,
+        Salad,
+    }
 }
 
 
+// useを使ってmoduleをスコープに持ち込む
+// use crate::front_of_house::hosting;
+// 相対パスで指定可能
+use self::front_of_house::hosting;  // 自ファイル内のモジュールを指定する場合はselfを使える
+// 関数を指定することも可能だが、module内で定義されているのかが分かりにくいのであまり使わない方が良い
+use self::front_of_house::hosting::add_to_waitlist;
+
+// ただ、構造体, enum, その他要素を指定する場合はフルパスで書くのが慣習としてある
+use std::collections::HashMap;
 
 pub fn eat_at_restaurant() {
     // 絶対パス
@@ -69,6 +85,9 @@ pub fn eat_at_restaurant() {
     // 相対パス
     front_of_house::hosting::add_to_waitlist();
 
+    // useでスコープに持ち込んだので、関数名だけで呼び出せる
+    hosting::add_to_waitlist();
+
 
     // 夏 (summer) にライ麦 (Rye) パン付き朝食を注文
     let mut meal = back_of_house::Breakfast::summer("Rye");
@@ -76,9 +95,46 @@ pub fn eat_at_restaurant() {
     meal.toast = String::from("Wheat");
     println!("I'd like {} toast please", meal.toast);
 
-    println!("readonly field -> {}", meal.seasonal_fruit);
-
     // 下の行のコメントを外すとコンパイルできない。食事についてくる
     // 季節のフルーツを知ることも修正することも許されていないので
     // meal.seasonal_fruit = String::from("blueberries");
+
+    let oder1 = back_of_house::Appetizer::Soup;
+    let oder2 = back_of_house::Appetizer::Salad;
 }
+
+// 同じ名前の要素があるとエラーになるため、下記のようにエイリアスをつけることができる
+use std::fmt::Result;
+use std::io::Result as IoResult;
+
+// useをネストさせることができる
+// use std::cmp::Ordering;
+// use std::fmt;
+// ↓
+use std::{cmp::Ordering, fmt};
+
+// use std::io;
+// use std::io::Write;
+// ↓
+use std::io::{self, Write};
+
+// glob演算子
+// use std::collections::*;  // testされるあらゆるものを tests モジュールに持ち込む時とかに便利
+
+// pub useについて
+/*
+// lib.rs
+mod internal {
+    pub struct MyStruct;
+}
+
+// モジュールをそのまま公開しない場合
+pub use internal::MyStruct;
+
+// main.rs
+// pub useがない場合
+use my_library::internal::MyStruct; // 内部構造を知る必要がある
+
+// pub useがある場合
+use my_library::MyStruct; // シンプルにアクセス可能
+*/
