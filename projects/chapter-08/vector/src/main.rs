@@ -49,10 +49,19 @@ fn main() {
         println!("{}", i);
     }
 
+    // &を使わず、.iter()を使って同じことができる
+    for i in v.iter() {
+        println!("{}", i);
+    }
     // 可変参照でforループ
     let mut v = vec![100, 32, 57];
     for i in &mut v {
         // *: 参照外し演算子
+        *i += 50;
+        println!("{}", i);
+    }
+    // &mutを使わず、.iter_mut()を使って同じことができる
+    for i in v.iter_mut() {
         *i += 50;
         println!("{}", i);
     }
